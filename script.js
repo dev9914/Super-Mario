@@ -15,39 +15,41 @@ function playing() {
   backgroundAudio.play();
   obstacle.style.display = "block";
   mario.style.display = "block";
-  Start.style.visibility = "hidden"
+  Start.style.visibility = "hidden"  
+      document.onkeydown = function (e) {
+        // console.log("Key code is:", e.keyCode);
+        if (e.keyCode == 38) {
+          mario = document.querySelector(".mario");
+          mario.classList.add("animateMario");
+          setTimeout(() => {
+            mario.classList.remove("animateMario");
+          }, 700);
+        } else if (e.keyCode == 39) {
+          mario = document.querySelector(".mario");
+          marioX = parseInt(
+            window.getComputedStyle(mario, null).getPropertyValue("left")
+          );
+          mario.style.left = marioX + 100 + "px";
+        } else if (e.keyCode == 37) {
+          mario = document.querySelector(".mario");
+          marioY = parseInt(
+            window.getComputedStyle(mario, null).getPropertyValue("left")
+          );
+          mario.style.left = marioY - 100 + "px";
+        }
+      
+    }
 }
 Start.addEventListener("click", playing);
 function stopAudio() {
   backgroundAudio.pause();
 }
-document.onkeydown = function (e) {
-  console.log("Key code is:", e.keyCode);
-  if (e.keyCode == 38) {
-    mario = document.querySelector(".mario");
-    mario.classList.add("animateMario");
-    setTimeout(() => {
-      mario.classList.remove("animateMario");
-    }, 700);
-  } else if (e.keyCode == 39) {
-    mario = document.querySelector(".mario");
-    marioX = parseInt(
-      window.getComputedStyle(mario, null).getPropertyValue("left")
-    );
-    mario.style.left = marioX + 100 + "px";
-  } else if (e.keyCode == 37) {
-    mario = document.querySelector(".mario");
-    marioY = parseInt(
-      window.getComputedStyle(mario, null).getPropertyValue("left")
-    );
-    mario.style.left = marioY - 100 + "px";
-  }
-};
 
-setInterval(() => {
+  const intervalId = setInterval(() => {
   mario = document.querySelector(".mario");
   gameOver = document.querySelector(".gameOver");
   obstacle = document.querySelector(".obstacle");
+  startAgain = document.querySelector(".playAgain");
 
   mx = parseInt(window.getComputedStyle(mario, null).getPropertyValue("left"));
   my = parseInt(window.getComputedStyle(mario, null).getPropertyValue("top"));
@@ -56,15 +58,23 @@ setInterval(() => {
 
   differenceX = Math.abs(mx - ox);
   differenceY = Math.abs(my - oy);
-  console.log(differenceX, differenceY);
+  // console.log(differenceX, differenceY);
   if (differenceX < 115 && differenceY < 115) {
+    startAgain.style.visibility = 'visible';
+    document.getElementById("playAgain").addEventListener("click", function() {
+      // Reload the page
+      location.reload();
+    });
     gameOver.style.visibility = "visible";
     obstacle.classList.remove("obstacleAnimation");
     stopAudio();
     dead();
+    clearInterval(intervalId);
     setTimeout(() => {
       stopdead();
-    }, 2000);
+    }, 2100);
+    
+
   } else if (differenceX < 140 && cross) {
     score += 1;
     updateScore(score);
